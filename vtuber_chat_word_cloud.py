@@ -36,9 +36,9 @@ def process_chat_log(vid_id):
             remove(f"backup/{vid_id}.tmp")
         
         url = f"https://www.youtube.com/watch?v={vid_id}"
-        chat = ChatDownloader().get_chat(url)       
+        chat = ChatDownloader().get_chat(url)
         chat_log = open(f"backup/{vid_id}.tmp", 'w', encoding="utf-8", errors="ignore")
-        for json_message in chat:                            
+        for json_message in chat:
             text_msg = json_message['message']
             text_msg = re.sub(r':[a-zA-Z0-9_-]+:', '', text_msg)
 
@@ -55,7 +55,7 @@ def process_chat_log(vid_id):
     return word_cloud_string
 
 def generate_word_cloud(word_cloud_string,vid_id,name,mask,size,image_colors):
-    width,height = size 
+    width,height = size
     width*=5
     height*=5
     wc = WordCloud(background_color='black',stopwords=STOPWORDS, collocations=True,
@@ -115,7 +115,7 @@ def process_and_generate(vid_id,name,mask,size,image_colors):
 
 
 @wc.command()
-def channel(name:str = typer.Argument(...,help="Vtuber name"), image:Path= typer.Argument(...,help="Image for the word cloud"),api_key:str = typer.Argument(...,help="Holodex API key"), average:bool = typer.Argument(False,help="Average chat of all videos fetched"), max_videos:int = typer.Argument(None,help="Max number of videos fetched")):
+def channel(name:str = typer.Argument(...,help="Vtuber name"), image:Path= typer.Option(...,help="Image for the word cloud"),api_key:str = typer.Option(...,help="Holodex API key"), average:bool = typer.Option(False,help="Average chat of all videos fetched"), max_videos:int = typer.Option(None,help="Max number of videos fetched")):
     img = Image.open(image)
     size = img.size
     mask = np.array(img)
@@ -125,9 +125,9 @@ def channel(name:str = typer.Argument(...,help="Vtuber name"), image:Path= typer
     ids = asyncio.run(get_video_ids(channel_id,api_key,max_videos))
 
     process = partial(process_and_generate, name=name.split()[0], mask=mask, size=size, image_colors = image_colors)
-    every_word_cloud = "".join(process_map(process, ids))   
+    every_word_cloud = "".join(process_map(process, ids))
     if average:
-        generate_word_cloud(every_word_cloud,f"all_{max_videos}" if max_videos else "all", name, mask, size, image_colors)
+        generate_word_cloud(every_word_cloud,f"all_{max_videos}" if max_videos else "all", name.split()[0], mask, size, image_colors)
 
 
 def main():
