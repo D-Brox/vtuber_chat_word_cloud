@@ -3,7 +3,7 @@ from os import path, rename, remove
 from functools import partial
 from pathlib import Path
 
-__version__ = "0.0.12"
+__version__ = "0.0.13"
 
 import asyncio
 from tqdm.contrib.concurrent import process_map
@@ -68,6 +68,8 @@ def generate_word_cloud(word_cloud_string,vid_id,name,mask,size,image_colors):
     wc.to_file(f"output/{name}_{vid_id}.png")
 
 async def get_video_ids(channel_id, api_key, max_videos=None):
+    def is_public_stream(c):
+        return c.status == "past" and c.topic_id not in ["membersonly", "shorts"]
     async with HolodexClient(key=api_key) as client:
         res = await client.get_videos_from_channel(channel_id, "videos", {"paginated":"true","limit":"0"})
         total = res["total"]
@@ -78,10 +80,10 @@ async def get_video_ids(channel_id, api_key, max_videos=None):
         r = total % 25
         for i in range(q):
             videos = await client.videos_from_channel(channel_id, "videos", offset=i*25)
-            ids += [c.id for c in videos.contents if c.status=="past" and c.topic_id != "membersonly"]
+            ids += [c.id for c in videos.contents if is_public_stream(c)]
         if r:
             videos = await client.videos_from_channel(channel_id, "videos", limit = r, offset=q*25)
-            ids += [c.id for c in videos.contents if c.status=="past" and c.topic_id != "membersonly"]
+            ids += [c.id for c in videos.contents if is_public_stream(c)]
 
         return ids
 
