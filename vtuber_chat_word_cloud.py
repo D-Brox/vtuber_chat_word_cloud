@@ -3,7 +3,7 @@ from os import path, rename, remove
 from functools import partial
 from pathlib import Path
 
-__version__ = "0.0.13"
+__version__ = "0.0.14"
 
 import asyncio
 from tqdm.contrib.concurrent import process_map
@@ -106,7 +106,7 @@ def process_and_generate(vid_id,name,mask,size,image_colors):
         word_cloud_string = process_chat_log(vid_id)
     except Exception as e:
         print(f"Could not get chat for URL, {vid_id}, skipping...")
-        return
+        return ""
 
     if not path.exists(f"output/{name}_{vid_id}.png"):
         generate_word_cloud(word_cloud_string,vid_id,name,mask,size,image_colors)
