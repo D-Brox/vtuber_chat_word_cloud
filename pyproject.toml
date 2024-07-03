@@ -1,0 +1,39 @@
+[project]
+name = "vtuber-chat-word-cloud"
+authors = [
+    {name = "David Brochero"},
+]
+maintainers = [
+    {name = "David Brochero"},
+]
+description = "Generate Word Clouds from the YouTube Chat of any Vtuber"
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = [
+    "License :: OSI Approved :: MIT License"
+]
+dynamic = ["version"]
+dependencies = [
+    "chat-downloader",
+    "holodex",
+    "matplotlib",
+    "numpy",
+    "tqdm",
+    "typer",
+    "wordcloud"
+]
+
+
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+
+[project.urls]
+Home = "https://github.com/D-Brox/vtuber-chat-word-cloud"
+
+[project.scripts]
+vtuber_chat_word_cloud = "vtuber_chat_word_cloud:main"
+
+# [tool.flit.module]
+# name = "vtuber_chat_word_cloud"
